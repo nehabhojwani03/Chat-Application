@@ -34,8 +34,8 @@ app.listen(port, () => {
   console.log("Server running on port 8001".green.bold);
 });
 
-const User = require("./models/user");
-const message = require("./models/message");
+const User = require("/models/user");
+const message = require("/models/message");
 
 //endpoint for registration of the user
 app.post("/register", (req, res) => {
