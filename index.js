@@ -17,7 +17,7 @@ const jwt = require("jsonwebtoken");
 
 mongoose
   .connect(
-    "mongodb+srv://nehabhojwani:neha123@cluster0.j3nai6l.mongodb.net/?retryWrites=true&w=majority",
+    "mongodb://nehabhojwani:neha123@ac-ol3dtwx-shard-00-00.j3nai6l.mongodb.net:27017,ac-ol3dtwx-shard-00-01.j3nai6l.mongodb.net:27017,ac-ol3dtwx-shard-00-02.j3nai6l.mongodb.net:27017/?ssl=true&replicaSet=atlas-u22s1a-shard-0&authSource=admin&retryWrites=true&w=majority",
     // {
     //   useNewUrlParser: true,
     //   useUnifiedTopology: true,
@@ -45,7 +45,7 @@ app.post("/register", (req, res) => {
   const newUser = new User({ name, email, password, image });
 
   //save user to database
-  newUser.save(),
+  newUser.save().
     then(() => {
       res.status(200).json({ message: "User registered Successfully" });
     }).catch((err) => {
