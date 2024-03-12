@@ -98,3 +98,15 @@ app.post("/login", (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
     });
 });
+
+//endpoint to access all the user except the user who is currently logged in
+app.get("/users/:userId", (req, res) => {
+  const loggedUserId = req.params.user;
+
+  User.findById({_id:{ $ne : loggedUserId}}).then((users) =>{
+    res.status(200).json(users)
+  }).catch((error) => {
+    console.log("Error retrieving users", error);
+    res.status(500).json({message: "error retrieving users"})
+  })
+});
