@@ -64,7 +64,7 @@ const createToken = (userId) => {
   };
 
   //Generate the token with a secret key and expiration time
-  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%ZK", {expireIn: "1h"});
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%ZK", {expiresIn: "1h"});
   return token;
 };
 
@@ -82,12 +82,12 @@ app.post("/login", (req, res) => {
     .then((user) => {
       if (!user) {
         //User not found
-        return res.status(404).json({ message: "User not found" });
+        return res.status(401).json({ message: "User not found" });
       }
 
       //compare the provided password with the actual password
       if (user.password !== password) {
-        return res.status(404).json({ message: "Password invalid" });
+        return res.status(401).json({ message: "Password invalid" });
       }
 
       const token = createToken(user._id);
