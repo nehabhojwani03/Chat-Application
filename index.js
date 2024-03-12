@@ -17,7 +17,7 @@ const jwt = require("jsonwebtoken");
 
 mongoose
   .connect(
-    "mongodb+srv://nehabhojwani:neha123@cluster0.j3nai6l.mongodb.net/?retryWrites=true&w=majority",
+    "mongodb+srv://nehabhojwani:neha123@cluster0.j3nai6l.mongodb.net/?retryWrites=true&w=majority"
     // {
     //   useNewUrlParser: true,
     //   useUnifiedTopology: true,
@@ -45,11 +45,56 @@ app.post("/register", (req, res) => {
   const newUser = new User({ name, email, password, image });
 
   //save user to database
-  newUser.save().
-    then(() => {
+  newUser
+    .save()
+    .then(() => {
       res.status(200).json({ message: "User registered Successfully" });
-    }).catch((err) => {
+    })
+    .catch((err) => {
       console.log("Error registering user", err);
       res.status(500).json({ message: "Error registering user" });
+    });
+});
+
+//function for creating a token for the user
+const createToken = (userId) => {
+  //set the token payload
+  const payload = {
+    userId: userId,
+  };
+
+  //Generate the token with a secret key and expiration time
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%ZK", {expireIn: "1h"});
+  return token;
+};
+
+//endpoint for logging in  the user
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  //check if email and password are provided
+  if (!email || !password) {
+    return res.status(404).json({ message: "Email and password are required" });
+  }
+
+  //check for that user in the backend
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        //User not found
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      //compare the provided password with the actual password
+      if (user.password !== password) {
+        return res.status(404).json({ message: "Password invalid" });
+      }
+
+      const token = createToken(user._id);
+      res.status(200).json({ token });
+    })
+    .catch((error) => {
+      console.log("Error in finding the user", error);
+      res.status(500).json({ message: "Internal Server Error" });
     });
 });
