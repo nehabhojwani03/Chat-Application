@@ -100,13 +100,33 @@ app.post("/login", (req, res) => {
 });
 
 //endpoint to access all the user except the user who is currently logged in
-app.get("/users/:userId", (req, res) => {
-  const loggedUserId = req.params.user;
+// app.get("/user/:userId", (req, res) => {
+//   const loggedUserId = req.params.userId;
+//   User.findById({_id:{ $ne : loggedUserId}}).then((user) =>{
+//     res.status(200).json(user)
+//   }).catch((error) => {
+//     console.log("Error retrieving users", error);
+//     res.status(500).json({message: "error retrieving users"})
+//   })
+// });
 
-  User.findById({_id:{ $ne : loggedUserId}}).then((users) =>{
-    res.status(200).json(users)
-  }).catch((error) => {
-    console.log("Error retrieving users", error);
-    res.status(500).json({message: "error retrieving users"})
-  })
+app.get("/user/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ message: "Invalid user ID" });
+  }
+
+  const loggedUserId = mongoose.isValidObjectId(userId) ? mongoose.Types.ObjectId(userId) : undefined;
+
+  User.findById({ _id: { $ne: loggedUserId } })
+    .then((user) => {
+      console.log("Fetched user: ", user);
+      res.status(200).json(user);
+    })
+    .catch((error) => {
+      console.log("Error retrieving users: ", error);
+      res.status(500).json({ message: "error retrieving users" });
+    });
 });
+
