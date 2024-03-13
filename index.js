@@ -111,6 +111,8 @@ app.post("/login", (req, res) => {
 // });
 
 app.get("/user/:userId", (req, res) => {
+  console.log("Request received for user ID: ", req.params.userId);
+
   const { userId } = req.params;
 
   if (!userId) {
@@ -118,6 +120,12 @@ app.get("/user/:userId", (req, res) => {
   }
 
   const loggedUserId = mongoose.isValidObjectId(userId) ? mongoose.Types.ObjectId(userId) : undefined;
+
+  console.log("loggedUserId: ", loggedUserId);
+
+  if (!loggedUserId) {
+    return res.status(400).json({ message: "Invalid user ID" });
+  }
 
   User.findById({ _id: { $ne: loggedUserId } })
     .then((user) => {
